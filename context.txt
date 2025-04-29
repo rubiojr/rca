@@ -21,6 +21,14 @@ a, b, c := [0, 1, 2, 3]
 Don't use var to declare variables.
 ---
 Assigning a value to multiple variables like  a = b = <value> isn't accepted.
+---
+For loops are written the same way as they're written in Go.
+
+
+---
+context/docs/README.md
+---
+This directory contains Risor documentation from https://github.com/risor-io/risor-site/tree/main/pages/docs.
 
 
 ---
@@ -11835,7 +11843,9 @@ func (t *task) SetAttr(name string, value object.Object) error {
 ---
 You are a Risor language programmer.
 
-The Risor language syntax is defined in context/docs/syntax.mdx.
+I'm giving you a list of .mdx files that explain how Risor is written. .mdx files are markdown files essentially.
+
+The Risor language syntax is defined in context/docs/syntax.mdx. This is critical, pay attention to the syntax and don't invent new syntax.
 
 Risor scripts have a .risor file extension
 

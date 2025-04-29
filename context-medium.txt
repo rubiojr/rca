@@ -366,5 +366,6 @@ Remember these rules:
 - If-else and switch are expressions that return values
 - String interpolation with single quotes only supports simple variable substitution (`'{variable}'`). It does not support formatting specifications inside the curly braces like Python's f-strings. To format values, use the `fmt.sprintf()` function separately and concatenate the results
 - ^ is not a valid power operator in Risor. Use math.pow() function instead
+- Use os.stdin.input() to read input from the user
 
 Always follow the above rules.

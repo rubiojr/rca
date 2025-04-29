@@ -111,5 +111,6 @@ Remember these rules:
 - String interpolation does not accept formatting inside parenthesis {}. That is, print('{distance:.2f} kilometers') isn't valid in Risor
 - String interpolation with single quotes only supports simple variable substitution (`'{variable}'`). It does not support formatting specifications inside the curly braces like Python's f-strings. To format values, use the `fmt.sprintf()` function separately and concatenate the results
 - ^ is not a valid power operator in Risor. Use math.pow() function instead
+- Use os.stdin.input() to read input from the user
 
 Always follow the above rules.

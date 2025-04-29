@@ -1,0 +1,357 @@
+# Risor Language Reference Guide
+
+## Core Syntax
+
+### Variable Declaration
+```risor
+// Use := for variable declaration (not var keyword like in Go)
+x := 10
+y := "hello"
+z := 3.14
+
+// Constants
+const URL = "https://example.com"
+
+// Multiple variables need container initialization
+a, b, c := [1, 2, 3]  // Not a = b = c = value
+```
+
+### Data Types
+```risor
+// Basic types
+num := 42          // int
+price := 19.99     // float
+name := "Alice"    // string
+active := true     // bool
+nothing := nil     // nil
+
+// Container types
+items := [1, 2, 3]           // list
+settings := {theme: "dark"}  // map (keys are always strings)
+uniqueIds := {1, 2, 3}       // set
+```
+
+### String Handling
+```risor
+// Three types of strings:
+standard := "Double quotes: standard strings"
+template := 'Single quotes: support {variable} interpolation'
+multiline := `Backticks: raw strings
+that span multiple
+lines`
+
+name := "world"
+greeting := 'Hello, {name}!'  // "Hello, world!"
+
+// String methods
+"hello".to_upper()            // "HELLO"
+"  text  ".trim_space()       // "text"
+"a,b,c".split(",")            // ["a", "b", "c"]
+",".join(["a", "b", "c"])     // "a,b,c"
+```
+
+### Functions
+```risor
+// Basic function
+func add(a, b) {
+  return a + b
+}
+
+// Function with default parameter
+func greet(name='world') {
+  return 'Hello, {name}!'
+}
+
+// Functions as values
+doubler := func(x) {
+  return x * 2
+}
+
+// Functions can only return a single value
+// Use containers for multiple return values
+func get_user_info() {
+  return {name: "Alice", age: 30}
+}
+
+// Unpacking
+info := get_user_info()
+print(info.name)
+```
+
+### Control Flow
+```risor
+// If-else as expression
+status := if x > 10 {
+  "greater"
+} else if x == 10 {
+  "equal"
+} else {
+  "lesser"
+}
+
+// Switch as expression
+role := switch name {
+  case "admin":
+    "Administrator"
+  case "mod":
+    "Moderator"
+  default:
+    "User"
+}
+
+// Loops
+for i := 0; i < 5; i++ {
+  print(i)
+}
+
+i := 0
+for i < 5 {
+  print(i)
+  i++
+}
+
+list := [1, 2, 3]
+for i, value := range list {
+  print(i, value)
+}
+
+// Ternary expression
+allowed := age >= 18 ? true : false
+```
+
+## Error Handling
+
+```risor
+// Raising errors
+func divide(a, b) {
+  if b == 0 {
+    error("division by zero")
+  }
+  return a / b
+}
+
+// Try function for error handling
+result := try(
+  func() {
+    return divide(10, 0)
+  },
+  "division failed"
+)  // result is "division failed"
+
+// Chaining fallbacks
+result := try(
+  func() { error("first error") },
+  func() { error("second error") },
+  "default value"
+)  // result is "default value"
+
+// Access the error in fallback
+result := try(
+  func() {
+    error("something failed")
+  },
+  func(err) {
+    print("Error caught:", err)
+    return "recovered"
+  }
+)
+```
+
+## Pipe Operator
+
+```risor
+// Pipe operator passes the left value as first argument to the right function
+"hello" | strings.to_upper                 // "HELLO"
+[1, 2, 3] | math.sum                       // 6
+
+// Chain pipes
+"  hello  " | strings.trim_space | strings.to_upper  // "HELLO"
+
+// Process data pipeline style
+fetch("https://api.example.com/users")
+  | .json()
+  | jmespath("[].name")
+```
+
+## Modules and Imports
+
+```risor
+// Import module (no quotes)
+import math
+import time
+
+// Import with alias
+import strings as str
+
+// Import specific attributes
+from os import read_file, write_file
+
+// Using imported modules
+math.sqrt(16)
+str.to_upper("hello")
+```
+
+## Concurrency
+
+```risor
+// Channels
+c := chan(1)    // Buffered channel with capacity 1
+c <- "hello"    // Send value
+x := <-c        // Receive value
+close(c)        // Close channel
+
+// Range over channel (different from Go)
+for i, value := range c {
+  print(i, value)  // i is the index
+}
+
+// Goroutines
+go func() {
+  // Run in background
+  time.sleep(1)
+  print("background task completed")
+}()
+
+// Spawn and wait for result
+result := spawn(func(x) {
+  time.sleep(1)
+  return x * 2
+}, 21).wait()   // result is 42
+```
+
+## Built-ins and Common Modules
+
+### Key Built-ins
+```risor
+print("Output to console")           // Print to stdout
+len([1, 2, 3])                       // Length of container (3)
+assert(x > 0, "must be positive")    // Assertion with message
+type([1, 2])                         // Returns "list"
+keys({a: 1, b: 2})                   // Returns ["a", "b"]
+```
+
+### HTTP Operations
+```risor
+// Simple HTTP request
+response := fetch("https://api.example.com")
+status := response.status_code  // e.g., 200
+data := response.json()         // Parse JSON response
+
+// Request with options
+response := fetch("https://api.example.com", {
+  method: "POST",
+  headers: {"Content-Type": "application/json"},
+  data: {name: "Alice", age: 30}
+})
+```
+
+### File Operations
+```risor
+// Read/write files
+content := os.read_file("config.json")
+os.write_file("output.txt", "Hello, world!")
+
+// Directory operations
+files := os.read_dir("/tmp")
+os.mkdir("new_directory", 0755)
+path := filepath.join("path", "to", "file.txt")
+```
+
+### JSON and YAML
+```risor
+// JSON operations
+json_str := json.marshal({name: "Alice", age: 30})
+obj := json.unmarshal('{"name": "Bob", "age": 25}')
+
+// YAML operations
+yaml_str := yaml.marshal({name: "Alice", age: 30})
+obj := yaml.unmarshal("name: Bob\nage: 25")
+```
+
+### Time and Date
+```risor
+// Time operations
+now := time.now()
+formatted := now.format(time.RFC3339)
+time.sleep(0.5)  // Sleep for 0.5 seconds
+```
+
+## Complete Examples
+
+### HTTP API Client
+```risor
+import os
+
+// Function to fetch user data
+func get_user(id) {
+  response := try(
+    func() {
+      return fetch('https://api.example.com/users/{id}')
+    },
+    func(err) {
+      print("Request failed:", err)
+      return nil
+    }
+  )
+
+  if response == nil {
+    return nil
+  }
+
+  if response.status_code != 200 {
+    print("Error:", response.status_code)
+    return nil
+  }
+
+  return response.json()
+}
+
+// Process and save user data
+user := get_user(42)
+if user != nil {
+  print('Found user: {user.name}')
+  os.write_file("user_data.json", json.marshal(user))
+}
+```
+
+### Concurrent File Processing
+```risor
+import os
+import filepath
+
+func process_file(path) {
+  content := try(
+    func() { return os.read_file(path) },
+    func(err) {
+      print('Error reading {path}:', err)
+      return nil
+    }
+  )
+
+  if content == nil {
+    return nil
+  }
+
+  // Process content (e.g., count lines)
+  lines := strings.split(string(content), "\n")
+  return len(lines)
+}
+
+// Process multiple files concurrently
+files := os.read_dir(".")
+threads := []
+
+for _, file := range files {
+  if filepath.ext(file.name) == ".txt" {
+    threads.append(spawn(process_file, file.name))
+  }
+}
+
+// Collect results
+results := {}
+for i, thread := range threads {
+  path := files[i].name
+  results[path] = thread.wait()
+}
+
+print("Results:", results)

@@ -1,0 +1,16 @@
+#!/bin/sh
+set -e
+
+## Large context
+which files-to-prompt > /dev/null 2>&1 || {
+  echo "files-to-prompt not available, install with 'pip install files-to-prompt'"
+  exit 1
+}
+
+files-to-prompt context/common-rules.md context/docs prompts/prompt.md > context-large.txt
+
+## Medium context
+cat context/context-medium-base.txt context/common-rules.md context/modules-summary.md > context-medium.txt
+
+## Small context
+cat context/context-small-base.txt context/common-rules.md context/modules-summary.md > context-small.txt

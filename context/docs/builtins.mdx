@@ -1,0 +1,1008 @@
+import { Callout } from 'nextra/components';
+
+# Built-in Functions
+
+Risor includes this set of default built-in functions. The set of available
+built-ins is easily customizable, depending on the goals for your project.
+
+### all
+
+```go filename="Function signature"
+all(container) bool
+```
+
+Returns `true` if all objects in the given container are "truthy".
+
+```go copy filename="Example"
+>>> all([true, 1, "ok"])
+true
+>>> all([true, 0, "ok"])
+false
+```
+
+### any
+
+```go filename="Function signature"
+any(container) bool
+```
+
+Returns `true` if any of the objects in the given container are "truthy".
+
+```go copy filename="Example"
+>>> any([false, 0, "ok"])
+true
+>>> any([false, 0, ""])
+false
+```
+
+### assert
+
+```go filename="Function signature"
+assert(object, message)
+```
+
+Generates an error if `x` is "falsy". If a message is provided, it is used as
+the assertion error message.
+
+```go copy filename="Example"
+>>> assert(1 == 1)                 // no effect
+>>> assert(1 == 1, "check failed") // no effect
+>>> assert(1 == 2, "check failed") // raises error
+check failed
+>>> assert(1 == 2)                 // raises error
+assertion failed
+```
+
+### bool
+
+```go filename="Function signature"
+bool(object) bool
+```
+
+Returns `true` or `false` depending on whether the object is considered "truthy".
+Container types including lists, maps, sets, and strings evaluate to `false` when
+empty and `true` otherwise.
+
+```go copy filename="Example"
+>>> bool(1)
+true
+>>> bool(0)
+false
+>>> bool([1])
+true
+>>> bool([])
+false
+```
+
+### buffer
+
+```go filename="Function signature"
+buffer(object) buffer
+```
+
+Returns a Buffer object that wraps a Go `bytes.Buffer`.
+
+```go copy filename="Example"
+>>> buffer(5)
+buffer("\x00\x00\x00\x00\x00")
+>>> buffer(byte_slice([65, 66, 67]))
+buffer("ABC")
+>>> string(buffer(byte_slice([65, 66, 67])))
+"ABC"
+```
+
+<Callout type="info" emoji="ℹ️">
+  The Buffer type interoperates easily with Strings and ByteSlices. The Buffer
+  Go type implements [io.ReadWriter](https://pkg.go.dev/io#ReadWriter)
+  which means it can be provided to any Go function that accepts an
+  `io.Reader` or `io.Writer`.
+</Callout>
+
+### byte_slice
+
+```go filename="Function signature"
+byte_slice(object) byte_slice
+```
+
+Creates a new slice of bytes, which wraps the Go type `[]byte`. If a single
+argument is provided, it is used as the initial capacity of the slice. If a
+list of values is provided, the slice is initialized with those values.
+
+```go copy filename="Example"
+>>> byte_slice()
+byte_slice("")
+>>> byte_slice(5)
+byte_slice("\x00\x00\x00\x00\x00")
+>>> byte_slice([1, 2, 3])
+byte_slice("\x01\x02\x03")
+>>> byte_slice([65, 66, 67])
+byte_slice("ABC")
+>>> byte_slice([65]) + byte_slice([66, 67])
+byte_slice("ABC")
+>>> string(byte_slice([65, 66, 67]))
+"ABC"
+```
+
+### byte
+
+```go filename="Function signature"
+byte(object) byte
+```
+
+Returns a Byte object that wraps a Go `byte`. The Byte type interoperates
+seamlessly with Ints and Floats.
+
+```go copy filename="Example"
+>>> byte()
+0
+>>> byte(3)
+3
+>>> byte("3")
+3
+>>> byte(3) == 3
+true
+>>> byte(3) + 5.5
+8.5
+```
+
+### call
+
+```go filename="Function signature"
+call(function, ...args object) object
+```
+
+Calls the function with given arguments. This is primarily useful in pipe
+expressions when a function is being passed through the pipe as a variable.
+
+```go copy filename="Example"
+>>> func inc(x) { x + 1 }
+>>> call(inc, 99)
+100
+>>> inc | call(41)
+42
+```
+
+### cat
+
+```go filename="Function signature"
+cat(path string, ...paths string) string
+```
+
+Similar to the `cat` command in Unix, this function concatenates the contents
+of the given file path(s) and returns the result as a string.
+
+Assuming the following file exists:
+
+```text filename="names.txt"
+alice
+blake
+```
+
+```go copy filename="Example"
+>>> cat("names.txt")
+"alice\nblake\n"
+```
+
+### cd
+
+```go filename="Function signature"
+cd(string)
+```
+
+Changes the current working directory to the given path.
+
+```go copy filename="Example"
+>>> cd("/tmp")
+>>> os.getwd()
+"/tmp"
+```
+
+### chan
+
+```go filename="Function signature"
+chan(capacity int = 0) chan
+```
+
+Creates a new channel with the given capacity. If unspecified, the capacity
+defaults to 0. Channels are used to send and receive Risor objects between
+goroutines. The underlying Go equivalent is `chan object.Object`. This means
+any Risor object can be sent and received over a channel. Currently the Risor
+`select` statement does not support channels, however it may in the future.
+
+```risor copy filename="Example"
+>>> c := chan(8)
+>>> c <- "test"
+>>> <-c
+"test"
+```
+
+_New in Risor v1.4.0_.
+
+### chr
+
+```go filename="Function signature"
+chr(int) string
+```
+
+Converts an Int to the corresponding unicode rune, which is returned as a String.
+The `ord` built-in performs the inverse transformation.
+
+```go copy filename="Example"
+>>> chr(8364)
+"€"
+>>> chr(97)
+"a"
+```
+
+### chunk
+
+```go filename="Function signature"
+chunk(container, size int) list
+```
+
+Returns a list of chunks of the given container, where each chunk is a list of
+the given size. If the container is not evenly divisible by the size, the last
+chunk will contain the remaining elements.
+
+```go copy filename="Example"
+>>> chunk([1, 2, 3, 4, 5], 2)
+[[1, 2], [3, 4], [5]]
+>>> chunk([1, 2, 3, 4, 5], 3)
+[[1, 2, 3], [4, 5]]
+>>> chunk([1, 2, 3, 4, 5], 4)
+[[1, 2, 3, 4], [5]]
+>>> chunk([1, 2, 3, 4, 5], 5)
+[[1, 2, 3, 4, 5]]
+```
+
+### close
+
+```go filename="Function signature"
+close(channel)
+```
+
+Closes the given channel. This directly corresponds to the Go `close` function.
+If called on an already closed channel, an error is raised.
+
+```risor copy filename="Example"
+c := chan()
+
+go func() {
+    c <- 42
+    close(c)
+}()
+
+for _, v := range c {
+    print(v)
+}
+```
+
+### coalesce
+
+```go filename="Function signature"
+coalesce(...objects) object
+```
+
+Returns the first non-nil object in the given list of arguments. If no
+arguments are provided, or all arguments are `nil`, the result is `nil`.
+
+```risor copy filename="Example"
+>>> coalesce(nil, 1, 2, 3)
+1
+>>> coalesce(nil, nil, nil) # returns nil
+>>> coalesce()              # returns nil
+```
+
+### cp
+
+```go filename="Function signature"
+cp(src_path string, dst_path string)
+```
+
+Copies the contents of the source file to the destination file. If the
+destination file already exists, it is overwritten.
+
+```go copy filename="Example"
+>>> cp("foo.txt", "bar.txt")
+```
+
+### decode
+
+```go filename="Function signature"
+decode(object, codec_name string) object
+```
+
+Decodes the given object using the specified codec. The codec_name is a string
+that may be one of the following values:
+
+- `base64`
+- `base32`
+- `gzip`
+- `hex`
+- `json`
+- `csv`
+- `urlquery`
+
+```go copy filename="Example"
+>>> decode("616263", "hex")
+byte_slice("abc")
+>>> decode("YWJj", "base64")
+byte_slice("abc")
+>>> decode("a,b,c\n", "csv")
+[["a", "b", "c"]]
+```
+
+_See additional notes about codecs in the [encode](#encode) section below._
+
+### delete
+
+```go filename="Function signature"
+delete(map, key string)
+```
+
+Deletes the item with the specified key from the map. This operation has no
+effect if the key is not present in the map.
+
+```go copy filename="Example"
+>>> m := {one: 1, two: 2}
+{"one": 1, "two": 2}
+>>> delete(m, "one")
+{"two": 2}
+>>> delete(m, "foo")
+{"two": 2}
+```
+
+### encode
+
+```go filename="Function signature"
+encode(object, codec_name string) object
+```
+
+Encodes the given object using the specified codec. The codec_name is a string
+that may be one of the following values:
+
+- `base64`
+- `base32`
+- `gzip`
+- `hex`
+- `json`
+- `csv`
+- `urlquery`
+
+```go copy filename="Example"
+>>> encode("abc", "hex")
+"616263"
+>>> encode("abc", "base64")
+"YWJj"
+>>> encode([["a", "b", "c"]], "csv")
+"a,b,c\n"
+```
+
+`base64`, `base32`, and `hex` codecs operate on byte slices or types that can be
+automatically converted to a byte slice, such as strings. Other codecs may accept
+different types.
+
+<Callout type="info" emoji="ℹ️">
+  Additional codecs may be registered by calling the Go function
+  `builtins.RegisterCodec`
+</Callout>
+
+_gzip encoding added in Risor v1.5.0_.
+
+### error
+
+```go filename="Function signature"
+error(message string)
+```
+
+Raises an Error containing the given message. A [try](#try) call can be used to
+catch the error and handle it. Otherwise, the call stack unwinds and error
+stops execution of the program.
+
+```go copy filename="Example"
+>>> error("kaboom")
+kaboom
+```
+
+### fetch
+
+```go filename="Function signature"
+fetch(url string, opts map) http.response
+```
+
+Fetches the content of the given URL and returns an `http.response` object. The
+response object provides access to the HTTP status code, headers, and body.
+
+The following options are supported:
+
+| Name    | Type                 | Description                                            |
+| ------- | -------------------- | ------------------------------------------------------ |
+| method  | string               | The HTTP method to use.                                |
+| headers | map                  | The headers to send with the request.                  |
+| params  | map                  | The query parameters to send with the request.         |
+| body    | byte_slice or reader | The request body.                                      |
+| timeout | int                  | Request timeout in milliseconds.                       |
+| data    | object               | Object to marshal as JSON and send in the request body |
+
+```go copy filename="Example"
+>>> r := fetch("https://httpbin.org/get")
+>>> r.status_code
+200
+>>> r.header
+{"Connection": ["keep-alive"], "Content-Length": ["14"], "Content-Type": ["text/plain"], "Date": ["Mon, 15 Jan 2024 00:06:56 GMT"], "Server": ["nginx/1.25.1"], "Vary": ["Origin"]}
+>>> r.text()
+"143.89.131.113"
+```
+
+Visit the [http.response documentation](/docs/modules/http#response) for more information
+about the response object and its attributes.
+
+### float_slice
+
+```go filename="Function signature"
+float_slice(object) float_slice
+```
+
+Creates a new slice of floating point values, which wraps the Go type `[]float64`.
+If a single argument is provided, it is used as the initial capacity of the slice.
+If a list of values is provided, the slice is initialized with those values.
+
+```go copy filename="Example"
+>>> float_slice()
+float_slice([])
+>>> float_slice(5)
+float_slice([0 0 0 0 0])
+>>> float_slice([1.1, 2.2, 3.3])
+float_slice([1.1 2.2 3.3])
+>>> float_slice([1.1, 2.2, 3.3])[0]
+1.1
+```
+
+### float
+
+```go filename="Function signature"
+float(object) float
+```
+
+Converts a String or Int object to a Float. An error is generated if the
+operation fails.
+
+```go copy filename="Example"
+>>> float()
+0
+>>> float("4.4")
+4.4
+```
+
+### getattr
+
+```go filename="Function signature"
+getattr(object, name string, default_value object) object
+```
+
+Returns the named attribute from the object, or the default value if the
+attribute does not exist. The returned attribute is always a Risor object,
+which may be a function. This is similar to
+[getattr](https://docs.python.org/3/library/functions.html#getattr) in Python.
+
+```go copy filename="Example"
+>>> l := [1,2,3]
+[1, 2, 3]
+>>> append := getattr(l, "append")
+builtin(list.append)
+>>> append(4)
+[1, 2, 3, 4]
+>>> getattr(l, "unknown", "that doesn't exist")
+"that doesn't exist"
+```
+
+### getenv
+
+```go filename="Function signature"
+getenv(name string) string
+```
+
+Returns the value of the environment variable with the given name. If the
+variable is not set, an empty string is returned.
+
+```go copy filename="Example"
+>>> getenv("HOME")
+"/home/username"
+```
+
+### hash
+
+```go filename="Function signature"
+hash(b byte_slice, algorithm string) byte_slice
+```
+
+Hashes the given byte_slice b using the specified algorithm. If not provided,
+algorithm defaults to "sha256".
+
+```go copy filename="Example"
+>>> hash("abc")
+byte_slice("\xbax\x16\xbf\x8f\x01\xcf\xeaAA@\xde]\xae\"#\xb0\x03a\xa3\x96\x17z\x9c\xb4\x10\xffa\xf2\x00\x15\xad")
+>>> hash("a", "md5")
+byte_slice("\f\xc1u\xb9\xc0\xf1\xb6\xa81Ù\xe2iw&a")
+```
+
+Available algorithms:
+
+- `md5`
+- `sha1`
+- `sha256`
+- `sha512`
+
+### int
+
+```go filename="Function signature"
+int(object) int
+```
+
+Converts a String or Float to an Int. An error is generated if the operation
+fails.
+
+```go copy filename="Example"
+>>> int(4.4)
+4
+>>> int("123")
+123
+```
+
+### is_hashable
+
+```go filename="Function signature"
+is_hashable(object) bool
+```
+
+Returns `true` if the object is hashable, otherwise returns `false`. A Risor
+object is hashable if it implements the `object.Hashable` interface, which is
+defined in [this file](https://github.com/risor-io/risor/blob/main/object/object.go).
+
+Hashable objects may be stored as elements of a Risor set.
+
+```go copy filename="Example"
+>>> is_hashable("abc")
+true
+>>> is_hashable([1, 2, 3])
+false
+```
+
+### iter
+
+```go filename="Function signature"
+iter(container) iterator
+```
+
+Returns an iterator for the given container object. This can be used to iterate
+through items in a for loop or interacted with more directly. The returned
+iterator has `next()` and `entry()` methods which are used to move forward and
+to retrieve the current entry, respectively.
+
+```go copy filename="Example"
+>>> s := {"a", "b", "c"}
+>>> iterator := iter(s)
+>>> iterator.next()
+"a"
+>>> iterator.next()
+"b"
+>>> iterator.entry()
+iter_entry("b", true)
+>>> iterator.entry().key
+"b"
+>>> iterator.entry().value
+true
+```
+
+### jmespath
+
+```go filename="Function signature"
+jmespath(data object, expression string) object
+```
+
+Queries data using the given [JMESPath](https://jmespath.org/) expression. Note
+the data is provided as the first argument which makes it useful in pipe
+expressions.
+
+```go copy filename="Example"
+>>> jmespath({"count": 42, "name": "foo"}, "count")
+42
+>>> [{"name": "a"}, {"name": "b"}] | jmespath("[].name")
+["a", "b"]
+```
+
+<Callout type="info" emoji="ℹ️">
+  The `jmespath` built-in is included in the Risor CLI by default. However if
+  Risor is being used as a library, the `jmespath` module must be imported
+  explicitly.
+</Callout>
+
+### keys
+
+```go filename="Function signature"
+keys(container) list
+```
+
+Returns a list of all keys for items in the given map or list container.
+
+```go copy filename="Example"
+>>> m := {one: 1, two: 2}
+{"one": 1, "two": 2}
+>>> keys(m)
+["one", "two"]
+```
+
+### len
+
+```go filename="Function signature"
+len(container) int
+```
+
+Returns the size of the given container. Container types include:
+
+- `String`
+- `List`
+- `Map`
+- `Set`
+- `FloatSlice`
+- `ByteSlice`
+
+```go copy filename="Example"
+>>> len("ab")        // string length
+2
+>>> len([1,2,3])     // list length
+3
+>>> len({foo:"bar"}) // map length
+1
+>>> len({1,2,3,4})   // set length
+4
+```
+
+<Callout type="info" emoji="ℹ️">
+  Note that for String types, the length is the _number of underlying runes_ in
+  the string, not the number of bytes. This is subtly different than taking the
+  `len(s)` of a string in Go, which returns the number of bytes. Conceptually,
+  the approach Risor takes is that a String is a container for
+  [runes](https://go.dev/blog/strings).
+</Callout>
+
+### list
+
+```go filename="Function signature"
+list(container) list
+```
+
+Returns a new list populated with items from the given container. If a list is
+provided, a shallow copy of the list is returned. It is also commonly used to
+convert a set to a list.
+
+```go copy filename="Example"
+>>> s := {"a", "b", "c"}
+{"a", "b", "c"}
+>>> list(s)
+["a", "b", "c"]
+```
+
+### ls
+
+```go filename="Function signature"
+ls(path string) list
+```
+
+Lists the contents of the specified directory. If a directory is not provided,
+the current working directory is used. The returned list contains one `DirEntry`
+object for each file or directory in the specified directory.
+
+```go copy filename="Example"
+>>> ls()
+[dir_entry(name=file1.txt, type=regular), dir_entry(name=logs, type=dir)]
+>>> ls("logs")
+[dir_entry(name=logs.txt, type=regular)]
+```
+
+### make
+
+```go filename="Function signature"
+make(object object, capacity int = 0) object
+```
+
+Most Risor programs do not need to use `make` explicitly, however it can be
+useful when you would like to specify the underlying capacity of a container.
+This wraps the Go `make` function.
+
+The `object` argument must be one of the following:
+
+- a `list`, `map`, or `set` object.
+- a built-in function, one of: `chan`, `list`, `map`, or `set`.
+
+This object is only used to signal which type of object is being created. The
+capacity is specified by the `capacity` argument, which defaults to 0 if not
+provided.
+
+```risor copy filename="Example"
+>>> make(list, 10)
+[] # empty list, with underlying slice of capacity 10
+>>> make([], 10)
+[] # empty list, with underlying slice of capacity 10
+```
+
+_New in Risor v1.4.0_.
+
+### map
+
+```go filename="Function signature"
+map(container) map
+```
+
+Returns a new map which is populated with the items from the given container
+if one is provided. This behaves similarly to `dict` in Python.
+
+```go copy filename="Example"
+>>> map()
+{}
+>>> map([["k1", 1], ["k2", 2]])
+{"k1": 1, "k2": 2}
+>>> map({"a", "b", "c"}) // converts a set to a map
+{"a": true, "b": true, "c": true}
+```
+
+### nslookup
+
+```go filename="Function signature"
+nslookup(name string, query_type string = "HOST", resolver_addr string = "")
+```
+
+Look up the given domain name using the specified query type (default "HOST") and resolver
+address (default "" for system default).
+
+```go copy filename="Example"
+>>> nslookup("google.com")
+["172.253.115.138", "172.253.115.100", "172.253.115.139", "172.253.115.113", "172.253.115.101", "172.253.115.102", "2607:f8b0:4004:c08::8b", "2607:f8b0:4004:c08::71", "2607:f8b0:4004:c08::8a", "2607:f8b0:4004:c08::65"]
+```
+
+### ord
+
+```go filename="Function signature"
+ord(string) int
+```
+
+Converts a unicode character to the corresponding Int value. The `chr` built-in
+performs the inverse transformation. An error is generated if a multi-rune string is
+provided.
+
+```go copy filename="Example"
+>>> ord("€")
+8364
+>>> ord("a")
+97
+>>> chr(ord("€"))
+"€"
+```
+
+### print
+
+```go filename="Function signature"
+print(args ...object)
+```
+
+Prints the provided objects to stdout after converting them to their String
+representations. Spaces are inserted between each object and a trailing newline
+is output. This is a wrapper around `fmt.Println`.
+
+```go copy filename="Example"
+>>> print(42, "is the answer")
+42 is the answer
+```
+
+### printf
+
+```go filename="Function signature"
+printf(format string, args ...object)
+```
+
+Printf wraps `fmt.Printf` in order to print the formatted string and arguments
+to stdout. In the Risor REPL you will currently not see the `printf` output
+unless the string ends in a newline character.
+
+```go copy filename="Example"
+>>> printf("name: %s age: %d\n", "joe", 32)
+name: joe age: 32
+```
+
+### reversed
+
+```go filename="Function signature"
+reversed(list) list
+```
+
+Returns a new list which is a reversed copy of the provided list.
+
+```go copy filename="Example"
+>>> l := ["a", "b", "c"]
+["a", "b", "c"]
+>>> reversed(l)
+["c", "b", "a"]
+>>> l
+["a", "b", "c"]
+```
+
+### set
+
+```go filename="Function signature"
+set(container) set
+```
+
+Returns a new set containing the items from the given container object.
+
+```go copy filename="Example"
+>>> set("aabbcc")
+{"a", "b", "c"}
+>>> set([4,4,5])
+{4, 5}
+>>> set({one:1, two:2})
+{"one", "two"}
+```
+
+### setenv
+
+```go filename="Function signature"
+setenv(name, value string)
+```
+
+Sets the value of the environment variable with the given name to the provided
+value. If the variable does not exist, it is created.
+
+```go copy filename="Example"
+>>> setenv("FOO", "bar")
+>>> getenv("FOO")
+"bar"
+```
+
+### sorted
+
+```go filename="Function signature"
+sorted(container) list
+```
+
+Returns a sorted list of items from the given container object.
+
+```go copy filename="Example"
+>>> sorted("cba")
+["a", "b", "c"]
+>>> sorted([10, 3, -5])
+[-5, 3, 10]
+```
+
+### spawn
+
+```go filename="Function signature"
+spawn(function, args ...object) thread
+```
+
+Spawns a new goroutine and executes the given function in that goroutine. The
+function is passed the remaining arguments. Returns a Risor thread object that
+can be used to wait for the goroutine to finish and retrieve its return value.
+
+```go copy filename="Example"
+>>> func addone(x) { return x + 1 }
+>>> t := spawn(addone, 1)
+>>> t.wait()
+2
+```
+
+When using Risor as a library, this level of concurrency is not available
+by default. To enable it, pass the `risor.WithConcurrency()` option when
+initializing a Risor VM.
+
+_New in Risor v1.4.0_.
+
+### sprintf
+
+```go filename="Function signature"
+sprintf(format string, args ...object) string
+```
+
+Wraps `fmt.Sprintf` to format the string with the provided arguments. Risor
+objects are converted to their corresponding Go types before being passed to
+`fmt.Sprintf`.
+
+```go copy filename="Example"
+>>> sprintf("name: %s age: %d", "fred", 18)
+"name: fred age: 18"
+>>> sprintf("%v", [1, "a", 3.3])
+"[1 a 3.3]"
+```
+
+### string
+
+```go filename="Function signature"
+string(object) string
+```
+
+Returns a string representation of the given Risor object.
+
+```go copy filename="Example"
+>>> string({one:1, two:2})
+"{\"one\": 1, \"two\": 2}"
+>>> string(4.4)
+"4.4"
+>>> string([1,2,3])
+"[1, 2, 3]"
+```
+
+### try
+
+```go filename="Function signature"
+try(args ...object) object
+```
+
+Accepts one or more functions which are executed in order until one of them
+doesn't raise an error and returns that functions return value. If any
+non-callable object is reached in the provided arguments, that object is
+returned immediately. Otherwise, if all functions raise errors, `nil` is returned.
+
+```go copy filename="Example"
+>>> func kaboom() { error("kaboom!") }
+>>> try(kaboom)                                      // returns nil
+>>> try(kaboom, func() { error("this failed too") }) // returns nil
+>>> try(kaboom, "fallback")                          // returns "fallback"
+"fallback"
+>>> try(42)
+42
+>>> try(func() { 42 })
+42
+```
+
+If any function after the first accepts an argument, any error raised by the
+previous function is passed to the next function as its first argument.
+
+The example below prints `caught error: kaboom` and then returns the value 33.
+
+```risor copy filename="Example"
+try(func() {
+    error("kaboom")
+}, func(err) {
+    print("caught error:", err)
+    return 33
+})
+```
+
+### type
+
+```go filename="Function signature"
+type(object) string
+```
+
+Returns the type name of the given object as a String.
+
+```go copy filename="Example"
+>>> type(1)
+"int"
+>>> type(2.2)
+"float"
+>>> type("hi")
+"string"
+>>> type([])
+"list"
+>>> type({})
+"map"
+>>> type({1,2,3})
+"set"
+```
+
+### unsetenv
+
+```go filename="Function signature"
+unsetenv(name string)
+```
+
+Removes the environment variable with the given name.
+
+```go copy filename="Example"
+>>> setenv("FOO", "bar")
+>>> getenv("FOO")
+"bar"
+>>> unsetenv("FOO")
+>>> getenv("FOO")
+""
+```

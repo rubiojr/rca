@@ -1,0 +1,10 @@
+#!/bin/sh
+# pip install files-to-prompt
+
+which files-to-prompt > /dev/null 2>&1 || {
+  echo "files-to-prompt not available, install with 'pip install files-to-prompt'"
+  exit 1
+}
+
+files-to-prompt context > context.txt
+cat prompt.md >> context.txt

@@ -1,0 +1,107 @@
+{
+  "aws": {
+    "title": "aws"
+  },
+  "base64": {
+    "title": "base64"
+  },
+  "bcrypt": {
+    "title": "bcrypt"
+  },
+  "bytes": {
+    "title": "bytes"
+  },
+  "carbon": {
+    "title": "carbon"
+  },
+  "cli": {
+    "title": "cli"
+  },
+  "color": {
+    "title": "color"
+  },
+  "errors": {
+    "title": "errors"
+  },
+  "exec": {
+    "title": "exec"
+  },
+  "filepath": {
+    "title": "filepath"
+  },
+  "fmt": {
+    "title": "fmt"
+  },
+  "gha": {
+    "title": "gha"
+  },
+  "http": {
+    "title": "http"
+  },
+  "image": {
+    "title": "image"
+  },
+  "isatty": {
+    "title": "isatty"
+  },
+  "jmespath": {
+    "title": "jmespath"
+  },
+  "json": {
+    "title": "json"
+  },
+  "kubernetes": {
+    "title": "kubernetes"
+  },
+  "math": {
+    "title": "math"
+  },
+  "net": {
+    "title": "net"
+  },
+  "os": {
+    "title": "os"
+  },
+  "pgx": {
+    "title": "pgx"
+  },
+  "rand": {
+    "title": "rand"
+  },
+  "regexp": {
+    "title": "regexp"
+  },
+  "sched": {
+    "title": "sched"
+  },
+  "semver": {
+    "title": "semver"
+  },
+  "sql": {
+    "title": "sql"
+  },
+  "strconv": {
+    "title": "strconv"
+  },
+  "strings": {
+    "title": "strings"
+  },
+  "tablewriter": {
+    "title": "tablewriter"
+  },
+  "template": {
+    "title": "template"
+  },
+  "time": {
+    "title": "time"
+  },
+  "uuid": {
+    "title": "uuid"
+  },
+  "vault": {
+    "title": "vault"
+  },
+  "yaml": {
+    "title": "yaml"
+  }
+}

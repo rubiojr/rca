@@ -20,4 +20,5 @@ The context and the prompt required to generate Risor code is included in a sing
 
 Code editors like Zed can be given a context file to provide the necessary information for the assistant to understand the problem and generate the appropriate Risor code.
 
-![](/rca.mp4)
+https://github.com/user-attachments/assets/0bdd626e-5456-48ae-a479-7fe2feade100
+

@@ -102,9 +102,14 @@ json_str := json.marshal({name: "Alice", age: 30})
 parsed := json.unmarshal('{"name": "Bob"}')
 ```
 
-Remember:
+Remember these rules:
+- Use two spaces to indent code
 - No `var` keyword for variables
 - Module imports don't use quotes: `import math`
 - No `??` operator for null coalescing
 - String interpolation uses single quotes, not double quotes
-- String interpolation does not accept formatting inside {}
+- String interpolation does not accept formatting inside parenthesis {}. That is, print('{distance:.2f} kilometers') isn't valid in Risor
+- String interpolation with single quotes only supports simple variable substitution (`'{variable}'`). It does not support formatting specifications inside the curly braces like Python's f-strings. To format values, use the `fmt.sprintf()` function separately and concatenate the results
+- ^ is not a valid power operator in Risor. Use math.pow() function instead
+
+Always follow the above rules.

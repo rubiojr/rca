@@ -13,6 +13,14 @@ Example:
 String interpolation does not accept formatting inside {}.
 ---
 Variables are declared using the := operator
+---
+Multiple variable declaration needs to be initialized using a container.
+Example:
+a, b, c := [0, 1, 2, 3]
+
+Don't use var to declare variables.
+---
+Assigning a value to multiple variables like  a = b = <value> isn't accepted.
 
 
 ---

@@ -1,0 +1,36 @@
+context.txt contains the Risor language documentation.
+
+Create a [SIZE] version of this Risor language documentation that prioritizes the following:
+
+1. **Unique syntax and features** that distinguish Risor from similar languages like Python or Go
+   - String interpolation with single quotes `'Hello {name}'`
+   - Variable declaration with `:=`
+   - Pipe operator `|` functionality
+   - If-else and switch as expressions
+   - Error handling with `try` function (not try/catch blocks)
+
+2. **Common pitfalls and differences** that LLMs might get wrong
+   - No `var` keyword for variable declaration
+   - Multiple variable declaration needs container initialization
+   - No `??` operator
+   - Module import syntax (not using quotes)
+   - Channel and goroutine usage
+
+3. **Core built-ins and modules** with brief examples of their usage
+   - Include the most commonly used functions from key modules
+   - Prioritize unique features like `fetch`, `try`, modules like `aws`, `time`, etc.
+   - Show examples of working with common types (lists, maps, etc.)
+
+4. **Practical examples** that demonstrate idiomatic Risor code
+   - Include examples showing:
+     - HTTP requests and JSON handling
+     - File operations
+     - Error handling
+     - Concurrent operations
+
+Documentation size guidelines:
+- If [SIZE] is **small**: Focus only on core syntax, most distinctive features, and 1-2 tiny examples (~500 words)
+- If [SIZE] is **medium**: Include more modules, built-ins, and 2-3 complete examples (~1500 words)
+- If [SIZE] is **large**: Cover most features, common modules, and 4-5 complex examples (~3000 words)
+
+The documentation should emphasize what makes Risor unique compared to Python, JavaScript, and Go, as these are the languages LLMs are most likely to confuse it with.

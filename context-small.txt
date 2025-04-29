@@ -1,0 +1,109 @@
+# Risor Language Quick Reference
+
+## Core Syntax
+
+### Variable Declaration
+```risor
+// Use := for variable declaration (not var)
+x := 10
+y := "hello"
+
+// Multiple variables need container initialization
+a, b, c := [1, 2, 3]  // Not a = b = c = value
+```
+
+### String Interpolation
+```risor
+name := "world"
+// Use single quotes for string interpolation
+greeting := 'Hello, {name}!'  // "Hello, world!"
+```
+
+### Functions
+```risor
+// Functions with defaults
+func greet(name='world') {
+  return 'Hello, {name}!'
+}
+
+// Functions as values
+add := func(a, b) {
+  return a + b
+}
+```
+
+### Control Flow
+```risor
+// If-else is an expression
+status := if x > 10 {
+  "greater"
+} else {
+  "lesser"
+}
+
+// Switch is also an expression
+role := switch name {
+  case "admin":
+    "Administrator"
+  default:
+    "User"
+}
+
+// Ternary expression
+allowed := age >= 18 ? true : false
+```
+
+### Error Handling
+```risor
+// Use try function instead of try/catch blocks
+result := try(
+  func() { 
+    // Function that might raise an error
+    error("failed")
+  },
+  "fallback value"
+)
+```
+
+### Pipe Operator
+```risor
+// Pipe operator passes left value to first arg of right function
+"hello" | strings.to_upper  // "HELLO"
+```
+
+## Concurrency
+
+```risor
+// Channels
+c := chan(1)  // Buffered channel
+c <- "hello"  // Send
+x := <-c      // Receive
+
+// Goroutines
+go func() {
+  // Run in background
+  print("background")
+}()
+```
+
+## Common Operations
+
+```risor
+// HTTP Request
+response := fetch("https://api.example.com")
+data := response.json()
+
+// File Operations
+content := os.read_file("example.txt")
+os.write_file("output.txt", "hello")
+
+// JSON Handling
+json_str := json.marshal({name: "Alice", age: 30})
+parsed := json.unmarshal('{"name": "Bob"}')
+```
+
+Remember:
+- No `var` keyword for variables
+- Module imports don't use quotes: `import math`
+- No `??` operator for null coalescing
+- String interpolation uses single quotes, not double quotes

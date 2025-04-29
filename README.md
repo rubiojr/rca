@@ -16,6 +16,9 @@ This repository serves as a knowledge base to fine-tune AI systems to better und
 
 ## Using the context
 
+> [!WARNING]
+> The context.txt file is rather large (~70K tokens). Keep in mind that it may burn your LLM credits quite fast.
+
 The context and the prompt required to generate Risor code is included in a single file, `context.txt`. This file contains the necessary information for the assistant to understand the problem and generate the appropriate Risor code.
 
 Code editors like Zed can be given a context file to provide the necessary information for the assistant to understand the problem and generate the appropriate Risor code.

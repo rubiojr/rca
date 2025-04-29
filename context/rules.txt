@@ -1,0 +1,13 @@
+Risor language rules:
+---
+String interpolation in risor uses single quoted strings and a parenthesis.
+Example:
+
+>>> nums := [0, 1, 2, 3]
+[0, 1, 2, 3]
+>>> 'the max is {math.max(nums)} and the length is {len(nums)}'
+"the max is 3 and the length is 4"
+
+String interpolation does not accept formatting inside {}.
+---
+Variables are declared using the := operator

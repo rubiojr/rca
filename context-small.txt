@@ -107,3 +107,4 @@ Remember:
 - Module imports don't use quotes: `import math`
 - No `??` operator for null coalescing
 - String interpolation uses single quotes, not double quotes
+- String interpolation does not accept formatting inside {}

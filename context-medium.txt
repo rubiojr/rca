@@ -363,3 +363,4 @@ Remember:
 - Module imports don't use quotes: `import math` not `import "math"`
 - Use single quotes for string interpolation: `'Hello, {name}'`
 - If-else and switch are expressions that return values
+- String interpolation does not accept formatting inside {}

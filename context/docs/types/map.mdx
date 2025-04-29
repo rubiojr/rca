@@ -1,0 +1,99 @@
+# Map
+
+Maps associate keys with values and provide fast lookups by key. Risor
+maps use underlying Go maps of type `map[string]interface{}`. This means
+Risor maps always operate with string keys, which provides equivalence with JSON.
+
+```go
+>>> m := {one: 1, two: 2}
+{"one": 1, "two": 2}
+>>> m["three"] = 3
+>>> m
+{"one": 1, "three": 3, "two": 2}
+```
+
+## Container Operations
+
+```go
+>>> m := {"name": "sean", "age": 27}
+{"age": 27, "name": "sean"}
+>>> len(m)
+2
+>>> "age" in m
+true
+>>> m["age"]
+27
+>>> m["age"] = 28
+>>> m
+{"age": 28, "name": "sean"}
+>>> m.keys()
+["age", "name"]
+```
+
+## Related Built-ins
+
+### delete(map, key)
+
+Deletes the item with the specified key from the map. This operation has no
+effect if the key is not present in the map.
+
+### map(container)
+
+Returns a new map with the contents of the given container. Generally, containers
+are transformed into the map by creating an iterator for the given container and
+the key and value for each iterator entry are added to the map. As a special
+case, if the container is a list then it is expected to be a nested list of
+key-value pairs, e.g. `[["key1", "val1"]]`. Any non-string keys that are
+encountered are automatically converted to their string representation.
+
+```go
+>>> map({"a", "b", "c"})
+{"a": true, "b": true, "c": true}
+>>> map("abc")
+{"0": "a", "1": "b", "2": "c"}
+>>> map([["name", "joe"], ["age", 18]])
+{"age": 18, "name": "joe"}
+```
+
+## Methods
+
+### map.clear()
+
+Removes all items from the map.
+
+### map.copy()
+
+Returns a shallow copy of the map, containing the same keys and values.
+
+### map.get(key, default=nil)
+
+Returns the value associated with the given key, if it exists in the map.
+If the key is not in the map, the given default value is returned.
+
+### map.items()
+
+Returns a list of [key, value] pairs containing the items from the map.
+
+### map.keys()
+
+Returns a sorted list of keys contained in the map.
+
+### map.pop(key, default=nil)
+
+Returns the value associated with the given key and then removes it from the
+map. If the key is not in the map, the given default value is returned instead.
+
+### map.setdefault(key, default)
+
+Sets the key to the given default value if the key is not already in the map.
+If the key already is in the map, do nothing. Returns the value associated with
+the key after the set action.
+
+### map.update(other)
+
+Updates this map with the key-value pairs contained in the provided map,
+overwriting any items with matching keys already in this map.
+
+### map.values()
+
+Returns a sorted list of values contained in the map.

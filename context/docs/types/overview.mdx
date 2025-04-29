@@ -1,0 +1,52 @@
+import { Cards, Card } from 'nextra/components';
+
+# Data Types
+
+Risor includes a variety of built-in types. The core types are: int, float,
+bool, error, string, list, map, set, result, function, and time. There are also
+a handful of iterator types, one for each container type.
+
+Container types may hold a heterogeneous mix of types within. There is not
+currently a way to restrict the types a container may hold.
+
+Optional type hints like found in Python or Typescript may be a future addition
+to Risor.
+
+## Quick Reference
+
+```go
+101         // int
+1.1         // float
+"1"         // string
+[1,2,3]     // list
+{"key":2}   // map
+{1,2}       // set
+false       // bool
+nil         // nil
+func() {}   // function
+time.now()  // time
+```
+
+### Container Operations
+
+Strings in Risor implement the `object.Container` interface, which means they
+support typical container-style operations:
+
+```go
+>>> s := "hello"
+"hello"
+>>> s[0]
+"h"
+>>> len(s)
+5
+>>> s[1:3]
+"el"
+>>> s[1:]
+"ello"
+>>> s[:1]
+"h"
+>>> iter(s)
+string_iter("hello")
+>>> iter(s).next()
+iter_entry(0, "h")
+```

@@ -1,0 +1,162 @@
+# String
+
+Strings in Risor are based on the underlying `string` type in Go. As such,
+they support unicode and various operations like indexing operate on the
+underlying runes within the string.
+
+### Quote Types
+
+There are three ways to quote strings in Risor source code:
+
+```
+'single quotes: supports interpolated {vars}'
+"double quotes: equivalent to Go strings"
+`backticks: raw strings that may span multiple lines`
+```
+
+The single quoted string approach offers string formatting via interpolation,
+much like [f-strings](https://peps.python.org/pep-0498/) in Python. Arbitrary
+Risor expressions can be embedded within parentheses and resolved during
+evaluation. In Risor, the restriction on these expressions is that they
+cannot contain curly braces, since those are used to mark the beginning and
+end of the template expression.
+
+An example with simple expressions:
+
+```go
+>>> name := "jean"
+"jean"
+>>> age := 30
+30
+>>> '{name} is {age} years old'
+"jean is 30 years old"
+```
+
+Another example:
+
+```go
+>>> nums := [0, 1, 2, 3]
+[0, 1, 2, 3]
+>>> 'the max is {math.max(nums)} and the length is {len(nums)}'
+"the max is 3 and the length is 4"
+```
+
+### Container Operations
+
+Strings in Risor implement the `object.Container` interface, which means they
+support typical container-style operations:
+
+```go
+>>> s := "hello"
+"hello"
+>>> s[0]
+"h"
+>>> len(s)
+5
+>>> s[1:3]
+"el"
+>>> s[1:]
+"ello"
+>>> s[:1]
+"h"
+>>> iter(s)
+string_iter("hello")
+>>> iter(s).next()
+iter_entry(0, "h")
+```
+
+### Related Built-ins
+
+#### chr(int)
+
+Converts an Int to the corresponding unicode rune, which is returned as a String.
+The `ord` built-in performs the inverse transformation.
+
+#### ord(string)
+
+Converts a unicode character to the corresponding Int value. The `chr` built-in
+performs the inverse transformation. An error is generated if a multi-rune string is
+provided.
+
+#### sprintf(string, ...any)
+
+Wraps `fmt.Sprintf` to format the string with the provided arguments. Risor
+objects are converted to their corresponding Go types before being passed to
+`fmt.Sprintf`.
+
+#### string(x)
+
+Returns the string representation of any Risor object.
+
+### Methods
+
+#### string.contains(s)
+
+Returns a bool that indicates if `s` is a substring of this string.
+
+#### string.has_prefix(s)
+
+Checks whether the string begins with the prefix `s`.
+
+#### string.has_suffix(s)
+
+Checks whether the string ends with the suffix `s`.
+
+#### string.count(s)
+
+Returns the number of occurrences of `s` in this string.
+
+#### string.join(list)
+
+Return the joined result of the given list of strings, using this string
+as the separator.
+
+#### string.split(separator)
+
+Splits this string on all occurrences of the given separator, returning
+the resulting list of strings.
+
+#### string.fields()
+
+Splits this string on whitespace, returning the list of non-whitespace substrings. If this string is only whitespace, an empty list is returned.
+
+#### string.index(s)
+
+Returns the index of the first occurence of `s` in this string, or `-1`
+if `s` is not present.
+
+#### string.last_index(s)
+
+Returns the index of the last occurence of `s` in this string, or `-1`
+if `s` is not present.
+
+#### string.replace_all(old, new)
+
+Returns a copy of this string with all occurrences of `old` replaced by `new`.
+
+#### string.to_lower()
+
+Returns a copy of this string that is transformed to all lowercase.
+
+#### string.to_upper()
+
+Returns a copy of this string that is transformed to all uppercase.
+
+#### string.trim(cutset)
+
+Returns a copy of this string with all leading and trailing characters contained
+in `cutset` removed.
+
+#### string.trim_prefix(prefix)
+
+Returns a copy of this string without the given prefix. This is a no-op if this
+string doesn't start with `prefix`.
+
+#### string.trim_space()
+
+Returns a copy of this string without the leading and trailing whitespace.
+
+#### string.trim_suffix(suffix)
+
+Returns a copy of this string without the given suffix. This is a no-op if this
+string doesn't end with `suffix`.

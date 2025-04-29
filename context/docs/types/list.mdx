@@ -1,0 +1,107 @@
+# List
+
+Lists in Risor behave very similarly to lists in Python. Methods and indexing
+on lists are the primary way to interact with these objects. A list can store
+objects of any types, including a mix of types in one list.
+
+```go
+>>> l := ["a", 1, 2]
+["a", 1, 2]
+>>> l.append("tail")
+["a", 1, 2, "tail"]
+```
+
+## Container Operations
+
+```go
+>>> l := ["a", "b", "c"]
+["a", "b", "c"]
+>>> len(l)
+3
+>>> "c" in l
+true
+>>> "d" in l
+false
+>>> l[2]
+"c"
+>>> l[2] = "d"
+>>> l
+["a", "b", "d"]
+>>> l[1:]
+["b", "d"]
+>>> l[:1]
+["a"]
+```
+
+## Related Built-ins
+
+### list(container)
+
+Returns a new list populated with items from the given container. If a list is
+provided, a shallow copy of the list is returned. It is also commonly used to
+convert a set to a list.
+
+```go
+>>> s := {"a", "b", "c"}
+{"a", "b", "c"}
+>>> list(s)
+["a", "b", "c"]
+```
+
+## Methods
+
+### list.append(x)
+
+Adds x to the end of the list.
+
+### list.clear()
+
+Empties all items from the list.
+
+### list.copy()
+
+Returns a shallow copy of the list.
+
+### list.count(x)
+
+Returns a count of how many times x is found in the list.
+
+### list.extend(x)
+
+Adds all items contained in x to the end of the list.
+
+### list.index(x)
+
+Returns the first index of x in the list, or -1 if not found.
+
+### list.insert(index, x)
+
+Inserts x into the list at the specified index.
+
+### list.pop(index)
+
+Removes the item at the given index from the list.
+
+### list.remove(x)
+
+Removes the first occurence of x in the list.
+
+### list.reverse()
+
+Reverses the list in place.
+
+### list.sort()
+
+Sorts the list in place.
+
+### list.map(func)
+
+Returns a transformed list, in which the given function is applied to each list item.
+
+### list.filter(func)
+
+Returns a transformed list, in which the given function returns true for items that should be added to the output list.
+
+### list.each(func)
+
+Calls the supplied function once with each item in the list.

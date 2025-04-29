@@ -1,0 +1,60 @@
+# Numerics
+
+Int and Float types are the two numeric types in Risor. They correspond to
+boxed `int64` and `float64` values in Go. Risor automatically converts Ints
+to Floats in mixed type operations.
+
+The standard set of numeric operators are available when working with these types.
+
+| Operation | Result                |
+| --------- | --------------------- |
+| x + y     | sum of x and y        |
+| x - y     | difference of x and y |
+| x \* y    | product of x and y    |
+| -x        | negation of x         |
+| x \*\* y  | x to the power of y   |
+| x += y    | add y to x            |
+| x -= y    | subtract y from x     |
+| x \*= y   | multiply x by y       |
+| x /= y    | divide x by y         |
+
+```go
+>>> x := 2
+2
+>>> y := 3
+3
+>>> x * y
+6
+>>> x + y
+5
+>>> type(x + y)
+"int"
+>>> type(x + float(y))
+"float"
+```
+
+Many math functions are also available in the Risor `math` module.
+
+### Related Built-ins
+
+#### float(x)
+
+Converts a String or Int object to a Float. An error is generated if the
+operation fails.
+
+```go
+>>> float("4.4")
+4.4
+```
+
+#### int(x)
+
+Converts a String or Float to an Int. An error is generated if the operation
+fails.
+
+```go
+>>> int(4.4)
+4
+>>> int("123")
+123
+```

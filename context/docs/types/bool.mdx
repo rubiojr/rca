@@ -1,0 +1,38 @@
+# Bool
+
+The `bool` type in Risor is a simple wrapper of the Go `bool` type.
+
+All underlying object types in Risor implement the `object.Object` interface,
+which includes `IsTruthy()` and `Equals(other)` methods. It's good to keep this
+in mind since object "truthiness" can be leveraged in conditional statements.
+
+```go
+>>> bool(0)
+false
+>>> bool(5)
+true
+>>> bool([])
+false
+>>> bool([1,2,3])
+true
+>>> if 5 { print("5 is truthy") }
+5 is truthy
+>>> 5 == 5.0
+true
+>>> [1,2] == [1,2]
+true
+>>> [1,2] != [1,2]
+false
+>>> false == false
+true
+```
+
+### Related Built-ins
+
+#### bool(x)
+
+Returns `true` or `false` according to the given objects "truthiness". Container
+types including lists, maps, sets, and strings evaluate to `false` when empty
+and `true` otherwise. Iterators are truthy when there are more items remaining
+to iterate over. Objects of other types are generally always considered to
+be truthy.

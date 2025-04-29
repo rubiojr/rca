@@ -1,0 +1,70 @@
+# Set
+
+Sets represent an unordered collection of unique objects. Only hashable objects
+can be added to sets, which includes bool, int, float, nil, and string. It is
+not possible to add a list or map to a set, since they are not hashable.
+
+## Container Operations
+
+```go
+>>> s := {1, 2, 3}
+{1, 2, 3}
+>>> 3 in s
+true
+>>> 4 in s
+false
+>>> s[3]
+true
+>>> s[4]
+false
+>>> delete(s, 3)
+>>> s
+{1, 2}
+```
+
+## Related Built-ins
+
+### delete(set, key)
+
+Deletes the given key from the set. This is a no-op if the key is not present in the set.
+
+### set(container)
+
+Returns a new set that is populated with the contents of the given container.
+The loading behavior for each provided type is as follows:
+
+- Given a list, the values within are added to the set.
+- Given a string, the characters within are added to the set.
+- Given a map, the keys within are added to the set.
+
+```go
+>>> set([1, 2, 3, 3])
+{1, 2, 3}
+>>> set("abc")
+{"a", "b", "c"}
+>>> set({one: 1, two: 2})
+{"one", "two"}
+```
+
+## Methods
+
+### set.add(x)
+
+Add `x` to the set. If `x` is not hashable, an error is generated.
+
+### set.clear()
+
+Empties all items from the set.
+
+### set.remove(x)
+
+Remove `x` from the set. This is a no-op if `x` is not in the set.
+
+### set.union(other)
+
+Returns a new set which contains the union of all items from this set
+and the other set.
+
+### set.intersection(other)
+
+Returns a new set containing items that are present in both this set and the other set.

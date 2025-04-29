@@ -18,9 +18,9 @@ This repository serves as a knowledge base to fine-tune AI systems to better und
 
 To optimize for different token usage scenarios, we provide three versions of the Risor language context file:
 
-- **Small context (context-small.txt)** (~500 tokens): Contains only essential syntax, core built-ins, and minimal examples. Best for quick coding tasks where token efficiency is critical, though may sacrifice some accuracy with advanced features.
+- **Small context (context-small.txt)** (~2.5K tokens): Contains only essential syntax, core built-ins, and minimal examples. Best for quick coding tasks where token efficiency is critical, though may sacrifice some accuracy with advanced features.
 
-- **Medium context (context-medium.txt)** (~2K tokens): Balanced approach with more comprehensive syntax coverage, common modules, and several complete examples. Recommended for most use cases as it offers a good balance between token cost and coding accuracy.
+- **Medium context (context-medium.txt)** (~3.9K tokens): Balanced approach with more comprehensive syntax coverage, common modules, and several complete examples. Recommended for most use cases as it offers a good balance between token cost and coding accuracy.
 
 - **Large context (context-large.txt)** (~40K tokens): Complete language reference with extensive module documentation, detailed examples, and edge cases. Use when accuracy is paramount and token efficiency is less important.
 

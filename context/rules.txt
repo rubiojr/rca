@@ -21,3 +21,9 @@ Don't use var to declare variables.
 Assigning a value to multiple variables like  a = b = <value> isn't accepted.
 ---
 For loops are written the same way as they're written in Go.
+---
+The ?? operand isn't supported in Risor.
+---
+Only use operands defined in syntax.mdx
+---
+Module names when using 'import' for importing them aren't quoted.

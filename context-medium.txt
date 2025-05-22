@@ -1,3 +1,515 @@
+# Important rules when writing Risor code
+- Use two spaces to indent code
+- No `var` keyword for variables (use `:=`)
+- No `??` operator for null coalescing (use `coalesce()` function)
+- Module imports don't use quotes. Use `import math` and not not `import "math"`
+- Use single quotes for string interpolation: `'Hello, {name}'`
+- If-else and switch are expressions that return values
+- String interpolation with single quotes only supports simple variable substitution (`'{variable}'`). It does not support formatting specifications inside the curly braces like Python's f-strings. To format values, use the `fmt.sprintf()` function separately and concatenate the results
+- ^ is not a valid power operator in Risor. Use math.pow() function instead
+- Use os.stdin.input() to read input from the user
+- Risor doesn't have while to create loops. Always use for and range.
+- Risor doesn't have __main__ or __file__ globals
+- Risor doesn't support variadic arguments when calling or defining functions
+- Lists in Risor behave very similarly to lists in Python. Methods and indexing
+on lists are the primary way to interact with these objects. A list can store
+objects of any types, including a mix of types in one list.
+
+```go
+>>> l := ["a", 1, 2]
+["a", 1, 2]
+>>> l.append("tail")
+["a", 1, 2, "tail"]
+```
+- Reserved keywords:
+  - func
+  - import
+  - return
+  - if
+  - for
+  - range
+  - spawn
+  - from
+
+Always follow the above rules.
+# Syntax
+
+The overall idea for Risor syntax is that it is like Go, but aims to be more
+concise and expressive for scripting. Variables are dynamically typed and all
+Risor object types implement an `object.Object` interface defined in Go.
+
+### Variable Declarations
+
+Variables are declared using the := operator. Unlike in Go, all variables
+are dynamically typed.
+
+```risor copy
+// Declare a variable `x` and assign the integer value 10
+x := 10
+
+// Declare a variable `y` and assign the string value "hello"
+y := "hello"
+
+// Declare a variable `array` and assign an array of integers
+array := [1, 2, 3]
+```
+
+Constant declarations are also supported:
+
+```risor copy
+const url = "https://example.com"
+```
+
+### Variable Assignment
+
+Existing variables can be set using the = operator:
+
+```risor copy
+// Declare `x`
+x := 10
+
+// Update `x` to 20
+x = 20
+```
+
+### Functions
+
+Functions in Risor are declared using the `func` keyword. Type declarations are
+not supported.
+
+```risor copy
+func last(data) {
+    if len(data) == 0 {
+        return nil
+    }
+    return data[-1]
+}
+```
+
+Default parameter values are supported, with allowed types including strings,
+integers, floats, and booleans:
+
+```risor copy
+func greet(name='world') {
+    return 'Hello, ' + name
+}
+```
+
+Unlike in Go, functions can only return a single value. You can, however, return
+a list and unpack it:
+
+```risor copy
+func swap(a, b) {
+    return [b, a]
+}
+
+x, y := swap(10, 20)
+print(x, y)  // 20 10
+```
+
+Functions may be assigned to a variable and passed as values:
+
+```risor copy
+add := func(a, b) {
+    return a + b
+}
+
+result := add(10, 20) // 30
+```
+
+### Control Flow
+
+Risor supports most forms of control flow present in Go.
+
+```risor copy
+x := 10
+threshold := 5
+if x > threshold {
+    print("greater")
+} else if x == threshold {
+    print("equal")
+} else {
+    print("lesser")
+}
+```
+
+One difference with Risor is that if-else and switch are expressions in Risor,
+meaning they evaluate to a value.
+
+```risor copy
+x := if 10 > 5 {
+    "greater"
+} else {
+    "lesser"
+}
+
+print(x)  # "greater"
+```
+
+```risor copy
+name := "Alice"
+x := switch name {
+    case "Joe":
+        "Hello, Joe"
+    default:
+        "Hello, stranger"
+}
+print(x)  # "Hello, Joe"
+```
+
+Ternary expressions are supported:
+
+```risor copy
+x := 10 > 5 ? 1 : 0
+print(x) // 1
+```
+
+### Loops
+
+Risor supports for loops and range loops in the same way as Go.
+
+```risor copy
+for i := 0; i < 5; i++ {
+    print(i)
+}
+```
+
+```risor copy
+i := 0
+for i < 5 {
+    print(i)
+    i++
+}
+```
+
+```risor copy
+array := [1, 2, 3]
+for i, value := range array {
+    print(i, value)
+}
+```
+
+```risor copy
+for {
+    print("infinite loop")
+    time.sleep(1)
+}
+```
+
+`break` and `continue` keywords are also supported.
+
+```risor copy
+for i := 0; i < 10; i++ {
+    if i == 5 {
+        break
+    }
+    print(i)
+}
+```
+
+```risor copy
+for i := 0; i < 10; i++ {
+    if i == 5 {
+        continue
+    }
+    print(i)
+}
+```
+
+### Errors
+
+Risor errors are similar to exceptions in languages like Python and Javascript.
+This makes Risor more concise and suitable for scripts, as compared to Go. A
+built-in `try` function is provided to attempt an operation and fallback to a
+default value if it fails. `try` accepts any number of functions, and the first
+one that does not raise an error has its result returned. If a non-function value
+is reached, it is returned immediately.
+
+```risor copy
+result := try(func() { error("kaboom") }, "default value")
+print(result)  # "default value"
+```
+
+Errors can be raised using the `error` function:
+
+```risor copy
+func divide(a, b) {
+    if b == 0 {
+        error("bad idea: division by zero")
+    }
+    return a / b
+}
+```
+
+Also see the [Try-Catch Error Handling](syntax#try-catch-error-handling) section
+for more information.
+
+### Pipe Expressions
+
+Risor supports pipe expressions, which allow you to chain function calls
+together. The pipe operator `|` takes the result of the expression on its left
+and passes it as the first argument to the function on its right.
+
+```risor copy
+result := "hello" | strings.to_upper
+print(result)  # "HELLO"
+```
+
+### Importing Modules
+
+Modules are imported using the `import` keyword.
+
+```risor copy
+import mymod
+
+import mymod as mod
+```
+
+By default the Risor CLI will look for modules as `.risor` files in the
+current working directory.
+
+You can also import specific attributes from a module using the `from` keyword.
+
+```risor copy
+from mymod import myfunc
+
+from mymod import myfunc as f
+```
+
+### Strings
+
+Simple strings are declared using double quotes, as in Go:
+
+```risor copy
+s := "hello"
+```
+
+Multiline, raw strings are also supported using backticks:
+
+```risor copy
+s := `
+"one"
+"two"
+`
+```
+
+Templated strings are defined using single quotes, and variables are interpolated
+between curly braces:
+
+```risor copy
+name := "Joe"
+s := 'Hello, {name}'
+```
+
+### Data Structures
+
+Risor supports lists, maps, and sets.
+
+```risor copy
+// Values contained in data structures can hold mixed types
+mylist := [1, "two", 3.0]
+
+// Map keys are always strings
+mymap := {
+    "one": 1,
+    "two": 2,
+    "three": 3,
+}
+
+othermap := {
+    foo: "bar" // keys can be unquoted if they are valid identifiers
+}
+
+myset := {1, 2, 3}
+```
+
+Membership tests are performed using the `in` operator:
+
+```risor copy
+mylist := [1, 2, 3]
+print(1 in mylist)  // true
+```
+
+### Comments
+
+Single-line comments are defined using `//` or `#`, and multiline comments are
+defined using `/*` and `*/`.
+
+```risor copy
+// This is a single-line comment
+
+# This is also a single-line comment
+
+/* 
+This is a multiline comment
+*/
+```
+
+### Channels
+
+Risor supports Go-style channels for concurrent communication:
+
+```risor copy
+// Create a buffered channel with capacity 1
+c := chan(1)
+
+// Send a value to the channel
+c <- "hello"
+
+// Receive a value from the channel
+x := <-c
+
+// Close a channel
+close(c)
+```
+
+Risor channels behave like Go channels in many ways, however they support sending
+and receiving any Risor object type. Also when ranging over a channel, in Risor
+you receive both the index and value of the current item.
+
+```risor copy
+func work(count) {
+    mychan := chan(5)
+    go func() {
+        for i := 0; i < count; i++ {
+            mychan <- rand.float()
+        }
+        close(mychan)
+    }()
+    return mychan
+}
+
+// Different from Go: ranging over a channel yields both the index and value
+for i, value := range work(5) {
+    print(i, value)
+}
+```
+
+### Goroutines
+
+Risor supports launching goroutines using the `go` keyword:
+
+```risor copy
+// Launch a goroutine
+go func() {
+    // Do some work
+}()
+
+// Use a channel for communication
+c := chan(1)
+go func() {
+    c <- 42
+}()
+x := <-c
+```
+
+### Spawn
+
+The `spawn` function spawns a new goroutine and returns a `thread` object. The
+thread object can be used to wait for the goroutine to finish and retrieve its
+return value.
+
+```risor copy
+// Spawn a function and wait for its result
+result := spawn(func(x) { return x * 2 }, 21).wait()
+print(result)  // 42
+
+// Spawn multiple functions
+threads := []
+for i := 0; i < 5; i++ {
+    threads.append(spawn(func(x) { return x ** 2 }, i))
+}
+results := threads.map(func(t) { t.wait() })
+print(results)  // [0, 1, 4, 9, 16]
+```
+
+### Defer
+
+The `defer` statement allows you to schedule a function call to be run after the
+current function completes:
+
+```risor copy
+func example() {
+    defer print("This will be printed last")
+    print("This will be printed first")
+}
+
+example()
+```
+
+### Try-Catch Error Handling
+
+Risor provides a `try` function for error handling:
+
+```risor copy
+result := try(
+    func() {
+        // Code that might raise an error
+        error("Something went wrong")
+    },
+    func(err) {
+        // Error handler
+        print("Caught error:", err)
+        return "fallback value"
+    }
+)
+```
+
+See the [try](builtins#try) built-in for more information.
+## Documenting Risor function, classes and methods
+
+```go
+// Description of the function
+// This can span multiple lines
+//
+// Parameters:
+// - param1: Description of first parameter
+// - param2: Description of second parameter
+//
+// Returns: Description of what is returned
+```
+
+### Class or Function Annotations
+
+The tool looks for special annotation comments:
+
+- `@object.class` - Marks a class declaration
+- `@object.method` - Marks a class method
+- `@global.function` - Marks a global function
+
+## Example
+
+Input Risor file:
+
+```go
+// Prints a string
+//
+// Parameters:
+// - msg: string to print
+//
+// @global.function
+func print(msg) {
+}
+
+// @object.class
+Calculator := {
+  // Adds two numbers
+  //
+  // Parameters:
+  // - a: First number
+  // - b: Second number
+  //
+  // Returns: Sum of a and b
+  // @object.method
+  add = func(a, b) {
+    return a + b
+  }
+}
+```
+
+## Important
+
+* Ignore function names starting with _ or __
 # Risor Language Reference Guide
 
 ## Core Syntax
@@ -359,18 +871,6 @@ for i, thread := range threads {
 }
 
 print("Results:", results)
-# Important rules when writing Risor code
-- Use two spaces to indent code
-- No `var` keyword for variables (use `:=`)
-- No `??` operator for null coalescing (use `coalesce()` function)
-- Module imports don't use quotes. Use `import math` and not not `import "math"`
-- Use single quotes for string interpolation: `'Hello, {name}'`
-- If-else and switch are expressions that return values
-- String interpolation with single quotes only supports simple variable substitution (`'{variable}'`). It does not support formatting specifications inside the curly braces like Python's f-strings. To format values, use the `fmt.sprintf()` function separately and concatenate the results
-- ^ is not a valid power operator in Risor. Use math.pow() function instead
-- Use os.stdin.input() to read input from the user
-
-Always follow the above rules.
 # Errors Module Summary
 Errors module provides functions for creating error values in Risor.
 ## Functions

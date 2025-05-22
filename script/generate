@@ -7,10 +7,10 @@ which files-to-prompt > /dev/null 2>&1 || {
   exit 1
 }
 
-files-to-prompt context/common-rules.md context/docs prompts/prompt.md > context-large.txt
+files-to-prompt context/common-rules.md context/docgen.md context/docs prompts/prompt.md > context-large.txt
 
 ## Medium context
-cat context/context-medium-base.txt context/common-rules.md context/modules-summary.md > context-medium.txt
+cat context/common-rules.md context/docs/syntax.mdx context/docgen.md context/context-medium-base.txt context/modules-summary.md > context-medium.txt
 
 ## Small context
 cat context/context-small-base.txt context/common-rules.md context/modules-summary.md > context-small.txt
